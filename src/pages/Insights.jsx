@@ -14,7 +14,7 @@ export default function Insights() {
   const totalScans = scans.length;
   const avgConfidence =
     totalScans > 0
-      ? (scans.reduce((sum, s) => sum + s.confidence, 0) / totalScans) * 100
+      ? scans.reduce((sum, s) => sum + s.confidence, 0) / totalScans
       : 0;
   const diseaseDistribution = scans.reduce((acc, s) => {
     acc[s.predicted_disease] = (acc[s.predicted_disease] || 0) + 1;
@@ -84,9 +84,9 @@ export default function Insights() {
                   {scans.slice(0,5).map((s) => (
                     <div key={s.id} style={styles.tableRow}>
                       <span style={styles.cell}>{s.predicted_disease}</span>
-                      <span style={styles.cellSmall}>
-                        {(s.confidence * 100).toFixed(1)}%
-                      </span>
+                       <span style={styles.cellSmall}>
+                         {s.confidence.toFixed(1)}%
+                       </span>
                       <span style={styles.cell}>
                         {new Date(s.created_at).toLocaleDateString()}
                       </span>

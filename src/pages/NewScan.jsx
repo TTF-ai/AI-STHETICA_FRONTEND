@@ -41,8 +41,6 @@ export default function NewScan() {
       const formData = new FormData();
       formData.append("image", image);
       formData.append("patient", patientId);
-      formData.append("predicted_disease", "Pending Analysis");
-      formData.append("confidence", "0.0");
       if (notes) formData.append("notes", notes);
 
       const res = await createScan(formData);

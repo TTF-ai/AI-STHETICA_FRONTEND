@@ -32,7 +32,7 @@ export default function Dashboard() {
   const totalPatients = patients.length;
   const totalScans = scans.length;
   const recentScans = scans.slice(0, 5);
-  const highRisk = scans.filter((s) => s.confidence >= 0.8).length;
+  const highRisk = scans.filter((s) => s.confidence >= 80).length;
 
   if (loading)
     return (
@@ -136,7 +136,7 @@ export default function Dashboard() {
                          <p style={styles.scanDate}>{new Date(s.created_at).toLocaleDateString()}</p>
                       </div>
                       <div style={styles.scanRisk}>
-                         {(s.confidence * 100).toFixed(0)}% Risk
+                         {s.confidence.toFixed(0)}% Risk
                       </div>
                     </div>
                   ))}
