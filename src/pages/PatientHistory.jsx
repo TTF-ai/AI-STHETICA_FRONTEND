@@ -98,7 +98,15 @@ export default function PatientHistory() {
                                  </p>
                                  <div style={styles.scanScoreBox}>
                                     <span style={styles.scoreLabel}>RISK SCORE</span>
-                                    <span style={styles.scoreValue}>{(scan.confidence * 100).toFixed(0)}</span>
+                                    <span style={{
+                                       ...styles.scoreValue,
+                                       color: (scan.risk_score || 0) >= 67 ? "#EF5350"
+                                            : (scan.risk_score || 0) >= 44 ? "#FFA726"
+                                            : "#66BB6A"
+                                    }}>
+                                       {(scan.risk_score ?? scan.confidence ?? 0).toFixed(1)}%
+                                    </span>
+                                    <span style={styles.scoreOutOf}>/ 100%</span>
                                  </div>
                               </div>
                               <h4 style={styles.scanTitle}>{scan.predicted_disease}</h4>
@@ -266,7 +274,8 @@ const styles = {
   scanDate: { fontSize: "12px", fontWeight: "700", color: "var(--primary)", letterSpacing: "1px", margin: 0 },
   scanScoreBox: { display: "flex", flexDirection: "column", alignItems: "flex-end" },
   scoreLabel: { fontSize: "10px", fontWeight: "700", color: "var(--text-muted)", letterSpacing: "0.5px" },
-  scoreValue: { fontSize: "24px", fontWeight: "700", color: "var(--danger)", margin: "-4px 0 0 0" },
+  scoreValue: { fontSize: "24px", fontWeight: "700", color: "#66BB6A", margin: "-4px 0 0 0" },
+  scoreOutOf: { fontSize: "10px", fontWeight: "600", color: "var(--text-muted)", textAlign: "right" },
   
   scanTitle: { fontSize: "18px", fontWeight: "600", color: "var(--text-main)", marginBottom: "12px", width: "80%" },
   scanDesc: { fontSize: "14px", color: "var(--text-muted)", lineHeight: "1.5", marginBottom: "20px" },

@@ -97,3 +97,9 @@ input, select, textarea {
   50% { transform: translateY(320px); }
   100% { transform: translateY(0); }
 }
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; box-shadow: 0 0 0 4px var(--danger-light); }
+  100% { opacity: 1; }
+}

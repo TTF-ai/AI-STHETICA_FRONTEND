@@ -60,6 +60,7 @@ export const createPatient = (data) => API.post("patients/", data);
 
 // ── Scan helpers ──
 export const getScans = (params) => API.get("scans/", { params });
+export const createPrescription = (data) => API.post("prescriptions/", data);
 export const createScan = (formData) =>
   API.post("scans/", formData, {
     headers: { "Content-Type": "multipart/form-data" },

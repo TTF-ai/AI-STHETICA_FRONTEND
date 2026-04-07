@@ -38,22 +38,40 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Hero Graphic / Abstract UI element */}
+        {/* Hero Graphic — Static Clinical Card, no animation */}
         <div style={styles.heroVisual}>
           <div style={styles.abstractCard}>
-             <div style={styles.scanLine}></div>
              <div style={styles.abstractHeader}>
                  <span style={styles.dot}></span>
-                 LIVE AI SCAN
+                 AI ANALYSIS REPORT
+             </div>
+             <div style={styles.mockDiseaseList}>
+               {[
+                 { label: "Melanocytic Nevus",     risk: "LOW",    pct: "72%",  color: "#42A5F5" },
+                 { label: "Benign Keratosis",      risk: "LOW",    pct: "14%",  color: "#66BB6A" },
+                 { label: "Melanoma",              risk: "HIGH",   pct: "8%",   color: "#EF5350" },
+                 { label: "Basal Cell Carcinoma",  risk: "MEDIUM", pct: "4%",   color: "#FFA726" },
+                 { label: "Dermatofibroma",        risk: "LOW",    pct: "2%",   color: "#26C6DA" },
+               ].map((item) => (
+                 <div key={item.label} style={styles.mockDiseaseItem}>
+                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+                     <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.85)", fontWeight: "500" }}>{item.label}</span>
+                     <span style={{ fontSize: "11px", fontWeight: "700", color: item.color }}>{item.pct}</span>
+                   </div>
+                   <div style={{ height: "4px", backgroundColor: "rgba(255,255,255,0.12)", borderRadius: "2px" }}>
+                     <div style={{ width: item.pct, height: "100%", backgroundColor: item.color, borderRadius: "2px" }} />
+                   </div>
+                 </div>
+               ))}
              </div>
              <div style={styles.mockStats}>
                  <div style={styles.mockStatItem}>
-                    <div>Accuracy</div>
-                    <div style={{color: 'var(--primary)', fontWeight: '700'}}>98.4%</div>
+                    <div>Risk Score</div>
+                    <div style={{color: '#66BB6A', fontWeight: '700'}}>24 / 100</div>
                  </div>
                  <div style={styles.mockStatItem}>
-                    <div>Processing</div>
-                    <div style={{color: 'var(--success)', fontWeight: '700'}}>0.4s</div>
+                    <div>Category</div>
+                    <div style={{color: '#66BB6A', fontWeight: '700'}}>LOW RISK</div>
                  </div>
              </div>
           </div>
@@ -66,18 +84,33 @@ export default function Landing() {
          <div style={styles.featuresGrid}>
             <div style={styles.featureCard}>
                <div style={styles.featureIcon}>⚡</div>
-               <h3 style={styles.featureTitle}>Real-Time Insights</h3>
-               <p style={styles.featureDesc}>Get diagnostic probabilities mapping in under a second using our advanced model.</p>
+               <h3 style={styles.featureTitle}>Real-Time Risk Analysis</h3>
+               <p style={styles.featureDesc}>MobileNetV2 AI classifies skin lesions with a weighted risk score, ABCDE checklist, and per-class probability distribution in under a second.</p>
+            </div>
+            <div style={styles.featureCard}>
+               <div style={styles.featureIcon}>🔬</div>
+               <h3 style={styles.featureTitle}>Dermoscope Integration</h3>
+               <p style={styles.featureDesc}>Connect any USB dermatoscope and capture high-resolution scans directly from within the platform — no extra software needed.</p>
             </div>
             <div style={styles.featureCard}>
                <div style={styles.featureIcon}>🔒</div>
                <h3 style={styles.featureTitle}>Enterprise Security</h3>
-               <p style={styles.featureDesc}>End-to-end encrypted patient records and role-based access for your entire clinic.</p>
+               <p style={styles.featureDesc}>End-to-end encrypted patient records and JWT-based role access for doctors, nurses, and patients across your clinic.</p>
             </div>
             <div style={styles.featureCard}>
                <div style={styles.featureIcon}>📊</div>
                <h3 style={styles.featureTitle}>Deep Analytics</h3>
-               <p style={styles.featureDesc}>Track scanning history and watch patient disease progression over time.</p>
+               <p style={styles.featureDesc}>Track scan history, watch patient disease progression, and view aggregate confidence across all processed records.</p>
+            </div>
+            <div style={styles.featureCard}>
+               <div style={styles.featureIcon}>🎤</div>
+               <h3 style={styles.featureTitle}>Voice Prescriptions</h3>
+               <p style={styles.featureDesc}>Doctors can dictate prescriptions post-scan using built-in speech-to-text. Notes are saved directly to patient records in real time.</p>
+            </div>
+            <div style={styles.featureCard}>
+               <div style={styles.featureIcon}>🏥</div>
+               <h3 style={styles.featureTitle}>Multi-Role Workflows</h3>
+               <p style={styles.featureDesc}>Separate dashboards for doctors, nurses, and patients — with triage, referral, appointment scheduling, and report management.</p>
             </div>
          </div>
       </section>
@@ -137,17 +170,15 @@ const styles = {
 
   heroVisual: { flex: 1, display: "flex", justifyContent: "center", position: "relative" },
   abstractCard: {
-     width: "100%", maxWidth: "400px", aspectRatio: "4/5", background: "linear-gradient(145deg, #1e293b, #0f172a)",
-     borderRadius: "24px", position: "relative", overflow: "hidden", padding: "24px",
-     boxShadow: "0 24px 48px rgba(0,0,0,0.15)", border: "1px solid #334155",
-     display: "flex", flexDirection: "column", justifyContent: "space-between"
-  },
-  scanLine: {
-     position: "absolute", top: 0, left: 0, right: 0, height: "4px", background: "var(--primary)",
-     boxShadow: "0 0 20px 4px var(--primary)", animation: "scan 3s ease-in-out infinite", opacity: 0.8
+     width: "100%", maxWidth: "380px", background: "linear-gradient(145deg, #1e293b, #0f172a)",
+     borderRadius: "24px", overflow: "hidden", padding: "24px",
+     boxShadow: "0 24px 48px rgba(0,0,0,0.2)", border: "1px solid #334155",
+     display: "flex", flexDirection: "column", gap: "20px"
   },
   abstractHeader: { display: "flex", alignItems: "center", gap: "8px", color: "#fff", fontSize: "12px", fontWeight: "600", letterSpacing: "1px" },
-  dot: { width: "8px", height: "8px", backgroundColor: "var(--danger)", borderRadius: "50%", boxShadow: "0 0 8px var(--danger)" },
+  dot: { width: "8px", height: "8px", backgroundColor: "var(--success)", borderRadius: "50%", boxShadow: "0 0 8px var(--success)" },
+  mockDiseaseList: { display: "flex", flexDirection: "column", gap: "10px" },
+  mockDiseaseItem: {},
   mockStats: { display: "flex", gap: "16px", background: "rgba(255,255,255,0.05)", padding: "16px", borderRadius: "16px", backdropFilter: "blur(10px)" },
   mockStatItem: { flex: 1, color: "rgba(255,255,255,0.7)", fontSize: "12px", display: "flex", flexDirection: "column", gap: "4px" },
 
@@ -157,7 +188,7 @@ const styles = {
   featureCard: { background: "var(--bg-color)", padding: "32px", borderRadius: "20px", display: "flex", flexDirection: "column", alignItems: "flex-start" },
   featureIcon: { width: "48px", height: "48px", background: "var(--card-bg)", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px", marginBottom: "20px", boxShadow: "var(--shadow-sm)" },
   featureTitle: { fontSize: "18px", fontWeight: "700", color: "var(--text-main)", marginBottom: "12px" },
-  featureDesc: { fontSize: "14px", color: "var(--text-muted)", lineHeight: "1.5" },
+  featureDesc: { fontSize: "14px", color: "var(--text-muted)", lineHeight: "1.6" },
 
   footer: { padding: "32px", textAlign: "center", borderTop: "1px solid var(--primary-light)", backgroundColor: "var(--card-bg)", color: "var(--text-muted)", fontSize: "13px" }
 };

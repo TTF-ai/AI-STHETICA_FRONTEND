@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getPatients, getReports, createReport } from "../../services/api";
+import { getPatients, getReports, createReport, createPatient } from "../../services/api";
 
 export default function NursePatients() {
   const [patients, setPatients] = useState([]);
@@ -10,6 +10,10 @@ export default function NursePatients() {
   const [reportFile, setReportFile] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  
+  // New variables for adding a patient
+  const [patientForm, setPatientForm] = useState({ name: "", age: "", gender: "", phone: "", email: "" });
+  const [showPatientForm, setShowPatientForm] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -59,6 +63,33 @@ export default function NursePatients() {
     }
   };
 
+  const handleAddPatient = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    try {
+      await createPatient({
+        ...patientForm,
+        age: parseInt(patientForm.age, 10),
+      });
+      setPatientForm({ name: "", age: "", gender: "", phone: "", email: "" });
+      setShowPatientForm(false);
+      setSuccess("Patient added successfully.");
+      fetchData();
+    } catch (err) {
+      const errData = err.response?.data;
+      if (typeof errData === "object") {
+        const messages = Object.entries(errData)
+          .map(([field, msgs]) => `${field}: ${Array.isArray(msgs) ? msgs.join(", ") : msgs}`)
+          .join(" | ");
+        setError(messages);
+      } else {
+        setError("Failed to add patient.");
+      }
+    }
+  };
+
   const riskBadge = (zone) => {
     const colors = { low: "#10b981", medium: "#f59e0b", high: "#ef4444" };
     return {
@@ -76,13 +107,89 @@ export default function NursePatients() {
 
   return (
     <div style={s.container}>
-      <header style={s.header}>
-        <h1 style={s.title}>Patient Management</h1>
-        <p style={s.subtitle}>Collect reports, blood work, and clinical data for each patient.</p>
+      <header style={{...s.header, display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+        <div>
+          <h1 style={s.title}>Patient Management</h1>
+          <p style={s.subtitle}>Collect reports, blood work, and clinical data for each patient.</p>
+        </div>
+        <button style={s.addBtn} onClick={() => setShowPatientForm(!showPatientForm)}>
+          {showPatientForm ? "✕ Close Form" : "＋ Add Patient"}
+        </button>
       </header>
 
       {error && <div style={s.error}>{error}</div>}
       {success && <div style={s.success}>{success}</div>}
+
+      {showPatientForm && (
+        <div style={{ ...s.card, marginBottom: "24px" }}>
+          <h3 style={s.cardTitle}>New Patient Registration</h3>
+          <form onSubmit={handleAddPatient} style={s.form}>
+            <div style={s.inputGroup}>
+               <label style={s.label}>Full Name</label>
+               <input
+                 style={s.input}
+                 placeholder="e.g. Julian Weaver"
+                 value={patientForm.name}
+                 onChange={(e) => setPatientForm({ ...patientForm, name: e.target.value })}
+                 required
+               />
+            </div>
+            
+            <div style={{display: 'flex', gap: '16px'}}>
+              <div style={s.inputGroup}>
+                 <label style={s.label}>Age</label>
+                 <input
+                   style={s.input}
+                   placeholder="e.g. 54"
+                   type="number"
+                   value={patientForm.age}
+                   onChange={(e) => setPatientForm({ ...patientForm, age: e.target.value })}
+                   required
+                 />
+              </div>
+              <div style={s.inputGroup}>
+                 <label style={s.label}>Gender</label>
+                 <select
+                   style={s.input}
+                   value={patientForm.gender}
+                   onChange={(e) => setPatientForm({ ...patientForm, gender: e.target.value })}
+                   required
+                 >
+                   <option value="">Select Gender</option>
+                   <option value="Male">Male</option>
+                   <option value="Female">Female</option>
+                   <option value="Other">Other</option>
+                 </select>
+              </div>
+            </div>
+
+            <div style={s.inputGroup}>
+               <label style={s.label}>Phone Number</label>
+               <input
+                 style={s.input}
+                 placeholder="+1 (555) 000-0000"
+                 value={patientForm.phone}
+                 onChange={(e) => setPatientForm({ ...patientForm, phone: e.target.value })}
+                 required
+               />
+            </div>
+            <div style={s.inputGroup}>
+               <label style={s.label}>Email Address (Optional)</label>
+               <input
+                 style={s.input}
+                 placeholder="patient@example.com"
+                 type="email"
+                 value={patientForm.email}
+                 onChange={(e) => setPatientForm({ ...patientForm, email: e.target.value })}
+               />
+            </div>
+            
+            <button type="submit" style={s.submitBtn}>
+              Register Patient
+            </button>
+          </form>
+        </div>
+      )}
 
       <div style={s.grid}>
         {/* Patient List */}
@@ -207,6 +314,7 @@ const s = {
   header: { marginBottom: "32px" },
   title: { fontSize: "28px", fontWeight: "700", color: "var(--text-main)", marginBottom: "8px", letterSpacing: "-0.5px" },
   subtitle: { fontSize: "15px", color: "var(--text-muted)" },
+  addBtn: { backgroundColor: "var(--primary)", color: "#fff", border: "none", borderRadius: "24px", padding: "10px 24px", cursor: "pointer", fontSize: "14px", fontWeight: "600" },
   error: { background: "var(--danger-light)", color: "var(--danger)", padding: "12px", borderRadius: "8px", fontSize: "13px", marginBottom: "16px" },
   success: { background: "var(--success-light)", color: "var(--success)", padding: "12px", borderRadius: "8px", fontSize: "13px", marginBottom: "16px" },
   grid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", alignItems: "start" },

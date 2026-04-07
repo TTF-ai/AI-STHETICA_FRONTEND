@@ -68,16 +68,19 @@ export default function NurseDashboard() {
           <div style={s.table}>
             <div style={s.tableHeader}>
               <span style={s.cell}>DISEASE</span>
-              <span style={s.cellSmall}>CONFIDENCE</span>
+              <span style={s.cellSmall}>RISK SCORE</span>
               <span style={s.cell}>DATE</span>
             </div>
-            {recentScans.map((sc) => (
+            {recentScans.map((sc) => {
+              const score = sc.risk_score ?? sc.confidence ?? 0;
+              return (
               <div key={sc.id} style={s.tableRow}>
                 <span style={s.cell}>{sc.predicted_disease}</span>
-                <span style={s.cellSmall}>{(sc.confidence * 100).toFixed(0)}%</span>
+                <span style={s.cellSmall}>{score.toFixed(1)}%</span>
                 <span style={s.cell}>{new Date(sc.created_at).toLocaleDateString()}</span>
               </div>
-            ))}
+            );
+            })}
           </div>
         )}
       </div>

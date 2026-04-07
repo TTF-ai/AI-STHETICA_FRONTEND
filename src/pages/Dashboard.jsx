@@ -32,7 +32,10 @@ export default function Dashboard() {
   const totalPatients = patients.length;
   const totalScans = scans.length;
   const recentScans = scans.slice(0, 5);
-  const highRisk = scans.filter((s) => s.confidence >= 80).length;
+  // High risk = risk_score >= 67 (HIGH category) or risk_category === 'HIGH'
+  const highRisk = scans.filter((s) =>
+    s.risk_category === "HIGH" || (s.risk_score != null && s.risk_score >= 67)
+  ).length;
 
   if (loading)
     return (
@@ -129,17 +132,25 @@ export default function Dashboard() {
                 <p style={styles.empty}>No scans yet.</p>
               ) : (
                 <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
-                  {recentScans.map((s) => (
+                  {recentScans.map((s) => {
+                    // risk_score is 0-100. confidence is also 0-100 (percentage).
+                    // Use risk_score if available, fall back to confidence.
+                    const score = s.risk_score ?? s.confidence ?? 0;
+                    const cat = s.risk_category || (score >= 67 ? "HIGH" : score >= 44 ? "MEDIUM" : "LOW");
+                    const riskColor = cat === "HIGH" ? "#EF5350" : cat === "MEDIUM" ? "#FFA726" : "#66BB6A";
+                    const riskBg   = cat === "HIGH" ? "rgba(239,83,80,0.1)" : cat === "MEDIUM" ? "rgba(255,167,38,0.1)" : "rgba(102,187,106,0.1)";
+                    return (
                     <div key={s.id} style={styles.scanItem}>
                       <div>
                          <p style={styles.scanDisease}>{s.predicted_disease}</p>
                          <p style={styles.scanDate}>{new Date(s.created_at).toLocaleDateString()}</p>
                       </div>
-                      <div style={styles.scanRisk}>
-                         {s.confidence.toFixed(0)}% Risk
+                      <div style={{ ...styles.scanRisk, color: riskColor, backgroundColor: riskBg }}>
+                         {score.toFixed(1)}% Risk
                       </div>
                     </div>
-                  ))}
+                  );
+                  })}
                 </div>
              )}
           </div>

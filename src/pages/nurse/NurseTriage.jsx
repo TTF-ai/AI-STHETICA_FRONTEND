@@ -33,7 +33,8 @@ export default function NurseTriage() {
   const getAvgConfidence = (patientId) => {
     const ps = getPatientScans(patientId);
     if (ps.length === 0) return 0;
-    return ps.reduce((sum, s) => sum + s.confidence, 0) / ps.length;
+    // Use risk_score directly (which is 0-100), or fallback to confidence if missing
+    return ps.reduce((sum, s) => sum + (s.risk_score ?? s.confidence ?? 0), 0) / ps.length;
   };
 
   const handleZoneChange = async (patientId, zone) => {
@@ -100,7 +101,7 @@ export default function NurseTriage() {
             <div style={s.tableHeader}>
               <span style={{ ...s.cell, flex: 2 }}>PATIENT</span>
               <span style={s.cell}>SCANS</span>
-              <span style={s.cell}>AVG CONFIDENCE</span>
+              <span style={s.cell}>AVG RISK SCORE</span>
               <span style={s.cell}>RISK ZONE</span>
               <span style={s.cell}>ACTION</span>
             </div>
@@ -118,8 +119,8 @@ export default function NurseTriage() {
                   </span>
                   <span style={s.cell}>{scanCount}</span>
                   <span style={s.cell}>
-                    <span style={{ color: avgConf >= 0.7 ? "#ef4444" : avgConf >= 0.4 ? "#f59e0b" : "#10b981", fontWeight: "600" }}>
-                      {(avgConf * 100).toFixed(0)}%
+                    <span style={{ color: avgConf >= 70 ? "#ef4444" : avgConf >= 40 ? "#f59e0b" : "#10b981", fontWeight: "600" }}>
+                      {avgConf.toFixed(1)}%
                     </span>
                   </span>
                   <span style={s.cell}>
